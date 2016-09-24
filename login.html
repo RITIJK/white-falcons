@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Case</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+     <link rel="stylesheet" href="main1.css">
+    
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">White Falcons</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="WhiteFalconsHome.html">Home</a></li>
+      <li><a href="playersfalcons.html">Players</a></li>
+      <li><a href="Upcominggames.html">Games</a></li>
+      <li><a href="TheTeam.html">The Team</a></li>
+    </ul>
+      
+    <ul class="nav navbar-nav navbar-right">
+       <li><a href="login.html"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+        <li><a href="signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        
+    </ul>
+  
+  </div>
+</nav>
+    
+      <h1>Log in</h1> 
+     <p> 
+          <label for="username" class="uname" data-icon="u" ></label>
+          <input id="username" name="username" required="required" type="text" placeholder="Username"/>
+     </p>
+     <p> 
+          <label for="password" class="youpasswd" data-icon="p"></label>
+          <input id="password" name="password" required="required" type="password" placeholder="Password" /> 
+     </p>
+     
+     <p class="login button"> 
+          <input type="submit" value="Login" /> 
+     </p>
+
+                                        <form  action="register.php" autocomplete="on"> 
+                                            
+                                            <?php 
+
+    
+    require("includes/common.php"); 
+     
+    
+    $submitted_username = ''; 
+    if(!empty($_SESSION['user'])) 
+    { 
+        // Redirect if logged in
+        header("Location: https://just132.Justhost.com/~falconsp/index.html"); 
+         
+        
+        die("Already logged in, redirecting."); 	
+    }  
+    
+    if(!empty($_POST)) 
+    { 
+        
+        $query = " 
+            SELECT 
+                id, 
+                username, 
+                password, 
+                salt, 
+                email 
+            FROM users 
+            WHERE 
+                username = :username 
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':username' => $_POST['username'] 
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+             
+            die("Failed to run query"); 
+        } 
+         
+        
+        $login_ok = false; 
+         
+        
+        $row = $stmt->fetch(); 
+        if($row) 
+        { 
+            
+            $check_password = hash('sha256', $_POST['password'] . $row['salt']); 
+            for($round = 0; $round < 65536; $round++) 
+            { 
+                $check_password = hash('sha256', $check_password . $row['salt']); 
+            } 
+             
+            if($check_password === $row['password']) 
+            { 
+                // If they do, then we flip this to true 
+                $login_ok = true; 
+            } 
+        } 	
+         
+        
+        if($login_ok) 
+        { 
+            
+            unset($row['salt']); 
+            unset($row['password']); 
+             
+            
+            $_SESSION['user'] = $row; 
+             
+            
+            header("Location: https://just132.Justhost.com/~falconsp/private.php"); 
+            die("Redirecting to: private.php"); 
+        } 
+        else 
+        { 
+            
+            $submitted_username = htmlentities($_POST['username'], ENT_QUOTES, 'UTF-8'); 
+        } 
+    } 
+     
+?> 
+ <!-- Proper Login Area -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<style>
+		body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        
+      }
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      
+	  .form-signin-heading {
+		  margin-bottom: 20px;
+		  
+	  }
+	  .input-group 
+	  {
+		  margin-bottom: 20px
+		  
+	  }
+		 
+
+	
+	</style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="signin.css" rel="stylesheet">
+
+   
+    <script src="js/ie-emulation-modes-warning.js"></script>
+
+  
+  </head>
+
+  <body>
+	
+		<div class="center-block">
+		
+		<form role = "form" class = "form-signin" action = "https://just132.Justhost.com/~falconsp/login.php" method = "post">
+			<h2 class="form-signin-heading">Login to continue</h2>
+			<div class ="input-group">
+		
+				<span class = "input-group-addon">
+				<i class="glyphicon glyphicon-user"></i>
+				</span>
+			
+			<input class = "form-control" type="text" method="post" id="inputEmail" name="username" class="form-control" placeholder="Username" value="<?php echo $submitted_username; ?>" required autofocus>
+			</div>
+			<div class="input-group">
+		
+				<span class="input-group-addon">
+				<i class="glyphicon glyphicon-lock"></i>
+				</span>
+				
+				<input class = "form-control" type="password" method="post" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+			</div>
+			
+			
+			<button class="btn btn-lg btn-success btn-block" type="submit" value="Login">Sign in</button>
+		
+			<a href="https://just132.Justhost.com/~falconsp/register.php" class="btn btn-lg btn-primary btn-block">Register</a>
+			
+		</form>
+		
+		</div> <!-- /container -->
+	
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
